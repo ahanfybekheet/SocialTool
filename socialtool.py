@@ -1,3 +1,14 @@
+#-------------------------------------------------------------------------
+# SocialTool App
+# Easy module To Use, based on selenium to controle on your multi accounts on the social media platforms.
+# Version : 1.0.0
+# Developed By : Ahmed Hanfy Bekheet
+# Python Version : 3.9.0
+# Date : 3/25/2022
+#-------------------------------------------------------------------------
+
+
+
 import requests
 from lxml import etree
 from selenium import webdriver
@@ -35,14 +46,16 @@ class Browser():
         return proxies
 
     def using_proxy(self):
+        '''add proxy to option instance to used it in driver later'''
         proxy = self.get_proxies(1)[0]
         self.options.add_argument(f"--proxy-server={proxy}")
 
     def hide(self):
-        self.options.add_argument("--headless") 
+        '''add arguments to hide windows'''
+        self.options.add_argument("--headless") ##Use HeadLess Mode
         self.options.add_argument('--no-sandbox') 
         self.options.add_argument('--disable-gpu')  
-        self.options.add_argument('log-level=3')  
+        self.options.add_argument('log-level=3')  ##Hide Concole Warning/Errors 
         
     def launch_driver(self,driver_path):
         self.options.add_argument('--enable-popup-blocking')  
@@ -50,6 +63,7 @@ class Browser():
         self.driver = webdriver.Chrome(service = self.s,options=self.options) #create driver
 
     def open_facebook_acc(self,email,password):
+        
         #Get facebook page
         self.driver.get("https://www.facebook.com/login")
 
