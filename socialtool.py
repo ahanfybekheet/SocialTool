@@ -9,6 +9,7 @@
 
 
 
+from django.dispatch import receiver
 import requests
 from lxml import etree
 from selenium import webdriver
@@ -20,6 +21,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 
 class Browser():
+
     options = Options()
 
     def get_proxies(self,num_of_proxies:int) -> list[str]: 
@@ -57,12 +59,12 @@ class Browser():
         self.options.add_argument('--disable-gpu')  
         self.options.add_argument('log-level=3')  ##Hide Concole Warning/Errors 
         
-    def launch_driver(self,driver_path):
+    def launch(self,driver_path):
         self.options.add_argument('--enable-popup-blocking')  
         self.s = Service(driver_path)
         self.driver = webdriver.Chrome(service = self.s,options=self.options) #create driver
 
-    def open_facebook_acc(self,email,password):
+    def login_facebook(self,email,password):
         
         #Get facebook page
         self.driver.get("https://www.facebook.com/login")
@@ -106,3 +108,20 @@ class Browser():
         time.sleep(2)
         share_now_button = self.driver.find_element(By.XPATH,f'//*[@id="{page_id.get_attribute("id")}"]/div/div[1]/div/div[3]/div/div/div[2]/div/div/div[1]/div[1]/div/div/div[1]/div/div/div[1]/div/div[1]/div/div[1]/div[2]/div/div/div/div/span/span')
         share_now_button.click()
+
+    def send_message(self,reciever,message):
+        receiver_id = reciever[25:]
+        self.driver.get(f"https://www.facebook.com/messages/t/{receiver_id}")
+        self.driver.find_element(By.XPATH,'/html/body').click()
+        time.sleep(4)
+        message_box = self.driver.find_element(By.CSS_SELECTOR,'div[aria-label="Message"]')
+        message_box.send_keys(message,Keys.ENTER)
+
+    def send_message_as_spam(self,reciever,message,no_times):
+        receiver_id = reciever[25:]
+        self.driver.get(f"https://www.facebook.com/messages/t/{receiver_id}")
+        self.driver.find_element(By.XPATH,'/html/body').click()
+        time.sleep(4)
+        message_box = self.driver.find_element(By.CSS_SELECTOR,'div[aria-label="Message"]')
+        for i in range(no_times):
+            message_box.send_keys(message,Keys.ENTER)
